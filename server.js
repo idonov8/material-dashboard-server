@@ -7,8 +7,25 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 
 app.use(express.json())
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*')
+    res.header(
+        'Access-Control-Allow-Headers', 
+        'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+        )
+    if (req.method === 'OPTIONS'){
+        res.header('Access-Control-Allow-Methods', 'POST, GET')
+        return res.status(200)
+    }
+    next()
+})
 
-const users = []
+const users = [
+    {
+        name: 'ido',
+        password: '111'
+    }
+]
 
 app.get('/', (req, res) => {
     res.status(200).json({
