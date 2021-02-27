@@ -5,27 +5,12 @@ const express = require('express')
 const app = express()
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
+const cors = require('cors')
 
 app.use(express.json())
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*')
-    res.header(
-        'Access-Control-Allow-Headers', 
-        'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-        )
-    if (req.method === 'OPTIONS'){
-        res.header('Access-Control-Allow-Methods', 'POST, GET')
-        return res.status(200)
-    }
-    next()
-})
+app.use(cors())
 
-const users = [
-    {
-        name: 'ido',
-        password: '111'
-    }
-]
+const users = []
 
 app.get('/', (req, res) => {
     res.status(200).json({
@@ -46,7 +31,6 @@ app.post('/users', async (req,res) => {
 })
 app.post('/login', async (req, res) => {
     const user = users.find( user => user.name === req.body.name)
-    console.log(user)
     if (user == null) {
         return res.status(400).send('Cannot find user')
     }
@@ -56,7 +40,7 @@ app.post('/login', async (req, res) => {
             const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
             res.json( { accessToken: accessToken})
         } else {
-            res.send('Wrong Password')
+            res.json({error: 'Wrong Password'})
         }
     } catch {
         res.status(500).send()
