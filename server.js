@@ -48,17 +48,18 @@ app.post('/login', async (req, res) => {
 })
 
 app.get('/auto_login', authenticateToken, (req, res) => {
-    res.send('Token is valid :)')
+    res.json( { accessToken: req.token})
 })
 
 function authenticateToken(req, res, next){
-    const authHeader = req.header['authorization']
+    const authHeader = req.header('Authorization')
     const token = authHeader && authHeader.split(' ')[1]
     if (token === null) return res.sendStatus(401)
     
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user)=> {
         if (err) return res.sendStatus(403)
         req.user = user
+        req.token = token
         next()
     })
 }
