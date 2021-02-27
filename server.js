@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
 app.post('/users', async (req,res) => {
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
-        const user = { name: req.body.name, password: hashedPassword }
+        const user = { username: req.body.username, password: hashedPassword }
         users.push(user)
         console.log("created user ", user)
         res.status(201).send()
@@ -30,7 +30,7 @@ app.post('/users', async (req,res) => {
     }
 })
 app.post('/login', async (req, res) => {
-    const user = users.find( user => user.name === req.body.name)
+    const user = users.find( user => user.username === req.body.username)
     if (user == null) {
         return res.status(400).send('Cannot find user')
     }
